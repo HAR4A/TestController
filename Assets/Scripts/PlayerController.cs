@@ -10,6 +10,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float _jumpHeight = 1.5f;
     [SerializeField] private float _gravity = -9.81f; // -9.81f the closest value of the acceleration of free fall on the Earth
 
+    [SerializeField] private Transform _cameraTransform;
+
     private CharacterController _characterController;
     private Vector3 _velocity;
     private bool _isGrounded;
@@ -40,7 +42,9 @@ public class PlayerController : MonoBehaviour
         float moveX = Input.GetAxis("Horizontal");
         float moveZ = Input.GetAxis("Vertical");
 
-        Vector3 move = transform.right * moveX + transform.forward * moveZ;
+        Vector3 move = _cameraTransform.right * moveX + _cameraTransform.forward * moveZ;
+        move.y = 0f;
+
         _characterController.Move(move * _speed * Time.deltaTime);
     }
 
