@@ -7,8 +7,9 @@ using TMPro;
 public class PlayerController : MonoBehaviour
 {
     [SerializeField] private Transform _cameraTransform;
-    [SerializeField] private TextMeshProUGUI doubleJumpText;
-    [SerializeField] private TextMeshProUGUI speedBoostText;
+    [SerializeField] private TextMeshProUGUI _doubleJumpText;
+    [SerializeField] private TextMeshProUGUI _speedBoostText;
+    [SerializeField] private TextMeshProUGUI _currentSpeed;
 
     private CharacterController _characterController;
     private Vector3 _velocity;
@@ -42,6 +43,7 @@ public class PlayerController : MonoBehaviour
     private void Update()
     {
         _isGrounded = _characterController.isGrounded;
+        
 
         if (_isGrounded && _velocity.y < 0)
         {
@@ -53,9 +55,11 @@ public class PlayerController : MonoBehaviour
         Jump();
         DoubleJump();
         UpdateUI();
+        UpdateSpeedUI();
 
         _velocity.y += _gravity * Time.deltaTime;
         _characterController.Move(_velocity * Time.deltaTime);
+
     }
 
     private void Move()
@@ -89,10 +93,13 @@ public class PlayerController : MonoBehaviour
 
     private void UpdateUI()
     {
-        doubleJumpText.text = _doubleJumpEnabled ? $"Double Jump: {_doubleJumpTimer:F1}s" : "";
-        speedBoostText.text = _speedBoostEnabled ? $"Speed Boost: {_speedBoostTimer:F1}s" : "";
+        _doubleJumpText.text = _doubleJumpEnabled ? $"Double Jump: {_doubleJumpTimer:F1}s" : "";
+        _speedBoostText.text = _speedBoostEnabled ? $"Speed Boost: {_speedBoostTimer:F1}s" : "";        
     }
-
+    private void UpdateSpeedUI()
+    {
+        _currentSpeed.text = $"Speed: {_speed:F1}";
+    }
 
     /* BONUS METHODS*/
 
