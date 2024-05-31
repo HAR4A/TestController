@@ -14,7 +14,10 @@ public class PlayerController : MonoBehaviour
     private float _speed = 6.0f;
     private float _jumpHeight = 1.5f;
     private float _gravity = -9.81f; // -9.81f the closest value of the acceleration of free fall on the Earth
-    
+
+    private int _jumpCount = 0;
+    private int _maxJumpCount = 2;
+
     private void Start()
     {
         _characterController = GetComponent<CharacterController>();
@@ -27,10 +30,12 @@ public class PlayerController : MonoBehaviour
         if (_isGrounded && _velocity.y < 0)
         {
             _velocity.y = -2f;
+            _jumpCount = 0;                //reset jump counter 
         }
 
         Move();
         Jump();
+        DoubleJump();
 
         _velocity.y += _gravity * Time.deltaTime;
         _characterController.Move(_velocity * Time.deltaTime);
@@ -52,6 +57,16 @@ public class PlayerController : MonoBehaviour
         if (Input.GetButtonDown("Jump") && _isGrounded)
         {
             _velocity.y = Mathf.Sqrt(_jumpHeight * -2f * _gravity);
+            _jumpCount++;
+        }
+    }
+
+    private void DoubleJump()
+    {
+        if (!_isGrounded && Input.GetButtonDown("Jump") && _jumpCount < _maxJumpCount)
+        {
+            _velocity.y = Mathf.Sqrt(_jumpHeight * -2f * _gravity);
+            _jumpCount++;
         }
     }
 }
