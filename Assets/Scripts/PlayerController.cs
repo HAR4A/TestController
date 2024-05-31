@@ -6,15 +6,15 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField] private float _speed = 6.0f;
-    [SerializeField] private float _jumpHeight = 1.5f;
-    [SerializeField] private float _gravity = -9.81f; // -9.81f the closest value of the acceleration of free fall on the Earth
     [SerializeField] private Transform _cameraTransform;
-
     private CharacterController _characterController;
     private Vector3 _velocity;
     private bool _isGrounded;
 
+    private float _speed = 6.0f;
+    private float _jumpHeight = 1.5f;
+    private float _gravity = -9.81f; // -9.81f the closest value of the acceleration of free fall on the Earth
+    
     private void Start()
     {
         _characterController = GetComponent<CharacterController>();
