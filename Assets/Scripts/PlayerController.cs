@@ -12,15 +12,26 @@ public class PlayerController : MonoBehaviour
     private bool _isGrounded;
 
     private float _speed = 6.0f;
+    private float _originalSpeed;
     private float _jumpHeight = 1.5f;
-    private float _gravity = -9.81f; // -9.81f the closest value of the acceleration of free fall on the Earth
+    private float _gravity = -9.81f;
 
     private int _jumpCount = 0;
-    private int _maxJumpCount = 2;
+    private int _maxJumpCount = 1;
+      
+    private bool _doubleJumpEnabled = false;
+    private float _doubleJumpDuration = 10f;
+    private float _doubleJumpTimer = 0f;
+
+    private bool _speedBoostEnabled = false;
+    private float _speedBoostDuration = 10f;
+    private float _speedBoostTimer = 0f;
+          
 
     private void Start()
     {
         _characterController = GetComponent<CharacterController>();
+        _originalSpeed = _speed;
     }
 
     private void Update()
@@ -30,16 +41,19 @@ public class PlayerController : MonoBehaviour
         if (_isGrounded && _velocity.y < 0)
         {
             _velocity.y = -2f;
-            _jumpCount = 0;                //reset jump counter 
+            _jumpCount = 0;
         }
 
         Move();
         Jump();
         DoubleJump();
+        TurningDoubleJumpTimer();
+        TurningSpeedBoostTimer();
 
         _velocity.y += _gravity * Time.deltaTime;
         _characterController.Move(_velocity * Time.deltaTime);
     }
+ 
 
     private void Move()
     {
@@ -63,10 +77,63 @@ public class PlayerController : MonoBehaviour
 
     private void DoubleJump()
     {
-        if (!_isGrounded && Input.GetButtonDown("Jump") && _jumpCount < _maxJumpCount)
+        if (_doubleJumpEnabled && !_isGrounded && Input.GetButtonDown("Jump") && _jumpCount < _maxJumpCount)
         {
             _velocity.y = Mathf.Sqrt(_jumpHeight * -2f * _gravity);
             _jumpCount++;
+        }
+    }
+
+    /* BONUS METHODS*/
+
+    public void EnableDoubleJump()
+    {
+        _doubleJumpEnabled = true;
+        _maxJumpCount = 2;
+        _doubleJumpTimer = _doubleJumpDuration; 
+    }
+
+    public void DisableDoubleJump()
+    {
+        _doubleJumpEnabled = false;
+        _maxJumpCount = 1;
+    }
+
+    public void EnableSpeedBoost()
+    {
+        _speed *= 2;
+        _speedBoostEnabled = true;
+        _speedBoostTimer = _speedBoostDuration;
+    }
+
+    public void DisableSpeedBoost()
+    {
+        _speed = _originalSpeed;
+        _speedBoostEnabled = false;
+        _speedBoostTimer = 0f;
+    }
+
+    private void TurningDoubleJumpTimer()
+    {
+        if (_doubleJumpEnabled)
+        {
+            _doubleJumpTimer -= Time.deltaTime;
+            if (_doubleJumpTimer <= 0f)
+            {
+                DisableDoubleJump();
+            }
+        }
+    }
+
+    private void TurningSpeedBoostTimer()
+    {
+        if (_speedBoostEnabled)
+        {
+            _speedBoostTimer -= Time.deltaTime;
+            if (_speedBoostTimer <= 0f)
+            {
+                DisableSpeedBoost();
+            }
         }
     }
 }
