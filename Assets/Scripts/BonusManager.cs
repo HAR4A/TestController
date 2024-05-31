@@ -24,8 +24,7 @@ public class BonusManager : MonoBehaviour
         {         
             bonusScript.ApplyEffect(player); //Applies an effect to the player
             bonus.SetActive(false);
-          //  Debug.Log($"{bonus.name} deactivated");
-
+          //Debug.Log($"{bonus.name} deactivated");
             StartCoroutine(ReactivateBonus(bonus));
         }
     }
@@ -33,7 +32,7 @@ public class BonusManager : MonoBehaviour
     private IEnumerator ReactivateBonus(GameObject bonus)
     {
         yield return new WaitForSeconds(5f);
-      //  Debug.Log($"{bonus.name} reactivated");
+      //Debug.Log($"{bonus.name} reactivated");
         bonus.SetActive(true);
     }
 }
