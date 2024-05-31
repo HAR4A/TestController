@@ -1,12 +1,15 @@
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using TMPro;
 
 [RequireComponent(typeof(CharacterController))]
-
 public class PlayerController : MonoBehaviour
 {
     [SerializeField] private Transform _cameraTransform;
+    [SerializeField] private TextMeshProUGUI doubleJumpText;
+    [SerializeField] private TextMeshProUGUI speedBoostText;
+
     private CharacterController _characterController;
     private Vector3 _velocity;
     private bool _isGrounded;
@@ -18,7 +21,7 @@ public class PlayerController : MonoBehaviour
 
     private int _jumpCount = 0;
     private int _maxJumpCount = 1;
-      
+
     private bool _doubleJumpEnabled = false;
     private float _doubleJumpDuration = 10f;
     private float _doubleJumpTimer = 0f;
@@ -26,7 +29,9 @@ public class PlayerController : MonoBehaviour
     private bool _speedBoostEnabled = false;
     private float _speedBoostDuration = 10f;
     private float _speedBoostTimer = 0f;
-          
+
+    private Coroutine _doubleJumpCoroutine;
+    private Coroutine _speedBoostCoroutine;
 
     private void Start()
     {
@@ -47,13 +52,11 @@ public class PlayerController : MonoBehaviour
         Move();
         Jump();
         DoubleJump();
-        TurningDoubleJumpTimer();
-        TurningSpeedBoostTimer();
+        UpdateUI();
 
         _velocity.y += _gravity * Time.deltaTime;
         _characterController.Move(_velocity * Time.deltaTime);
     }
- 
 
     private void Move()
     {
@@ -84,56 +87,75 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    private void UpdateUI()
+    {
+        doubleJumpText.text = _doubleJumpEnabled ? $"Double Jump: {_doubleJumpTimer:F1}s" : "";
+        speedBoostText.text = _speedBoostEnabled ? $"Speed Boost: {_speedBoostTimer:F1}s" : "";
+    }
+
+
     /* BONUS METHODS*/
 
-    public void EnableDoubleJump()
+
+    public void EnableDoubleJump()          //activate double jump bonus
+    {
+        if (_doubleJumpCoroutine != null)
+        {
+            StopCoroutine(_doubleJumpCoroutine);
+        }
+        _doubleJumpCoroutine = StartCoroutine(DoubleJumpEffect());
+    }
+
+    private IEnumerator DoubleJumpEffect()     //manage time double jump bonus
     {
         _doubleJumpEnabled = true;
         _maxJumpCount = 2;
-        _doubleJumpTimer = _doubleJumpDuration; 
+        _doubleJumpTimer = _doubleJumpDuration;
+
+        while (_doubleJumpTimer > 0)
+        {
+            _doubleJumpTimer -= Time.deltaTime;
+            yield return null;
+        }
+
+        DisableDoubleJump();
     }
 
-    public void DisableDoubleJump()
+    public void DisableDoubleJump()     //disable double jump bonus
     {
         _doubleJumpEnabled = false;
         _maxJumpCount = 1;
+        _doubleJumpTimer = 0f;
     }
 
-    public void EnableSpeedBoost()
+    public void EnableSpeedBoost()          //activate boost speed bonus
     {
-        _speed *= 2;
+        if (_speedBoostCoroutine != null)
+        {
+            StopCoroutine(_speedBoostCoroutine);
+        }
+        _speedBoostCoroutine = StartCoroutine(SpeedBoostEffect());
+    }
+
+    private IEnumerator SpeedBoostEffect()      //manage time boost speed bonus
+    {
+        _speed = _originalSpeed * 2;
         _speedBoostEnabled = true;
         _speedBoostTimer = _speedBoostDuration;
+
+        while (_speedBoostTimer > 0)
+        {
+            _speedBoostTimer -= Time.deltaTime;
+            yield return null;
+        }
+
+        DisableSpeedBoost();
     }
 
-    public void DisableSpeedBoost()
+    public void DisableSpeedBoost()    //disable boost speed bonus
     {
         _speed = _originalSpeed;
         _speedBoostEnabled = false;
         _speedBoostTimer = 0f;
-    }
-
-    private void TurningDoubleJumpTimer()
-    {
-        if (_doubleJumpEnabled)
-        {
-            _doubleJumpTimer -= Time.deltaTime;
-            if (_doubleJumpTimer <= 0f)
-            {
-                DisableDoubleJump();
-            }
-        }
-    }
-
-    private void TurningSpeedBoostTimer()
-    {
-        if (_speedBoostEnabled)
-        {
-            _speedBoostTimer -= Time.deltaTime;
-            if (_speedBoostTimer <= 0f)
-            {
-                DisableSpeedBoost();
-            }
-        }
     }
 }
