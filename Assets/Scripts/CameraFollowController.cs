@@ -32,12 +32,9 @@ public class CameraFollowController : MonoBehaviour
     private void LateUpdate()
     {
         Quaternion rotation = Quaternion.Euler(_currentY, _currentX, 0);
-
         Vector3 position = _playerTransform.position + rotation * new Vector3(_offset.x, 0, _offset.z);
         position.y += _offset.y;
-
         transform.position = position;
-
         transform.LookAt(_playerTransform.position + Vector3.up * 1.5f);
     }
 }
