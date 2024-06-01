@@ -34,6 +34,7 @@ public class PlayerController : MonoBehaviour
 
     private Coroutine _doubleJumpCoroutine;
     private Coroutine _speedBoostCoroutine;
+    private Coroutine _flipCoroutine;
 
     private void Start()
     {
@@ -83,12 +84,17 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private void Jump()
+     private void Jump()
     {
         if (Input.GetButtonDown("Jump") && _isGrounded)
         {
             _velocity.y = Mathf.Sqrt(_jumpHeight * -2f * _gravity);
             _jumpCount++;
+            if (_flipCoroutine != null)
+            {
+                StopCoroutine(_flipCoroutine);
+            }
+            _flipCoroutine = StartCoroutine(Flip());
         }
     }
 
@@ -98,6 +104,11 @@ public class PlayerController : MonoBehaviour
         {
             _velocity.y = Mathf.Sqrt(_jumpHeight * -2f * _gravity);
             _jumpCount++;
+            if (_flipCoroutine != null)
+            {
+                StopCoroutine(_flipCoroutine);
+            }
+            _flipCoroutine = StartCoroutine(Flip());
         }
     }
 
@@ -109,11 +120,11 @@ public class PlayerController : MonoBehaviour
     private void ShowHeightAboveGround()
     {
         RaycastHit hit;
-        float distanceToGround = 0f;
+        float _distanceToGround = 0f;
 
         if (Physics.Raycast(transform.position, Vector3.down, out hit))
         {
-            distanceToGround = hit.distance;
+            _distanceToGround = hit.distance;
 
             //the variant bellow is for the distance to the main ground, and not to any solid object     
 
@@ -128,8 +139,28 @@ public class PlayerController : MonoBehaviour
             }*/
         }
 
-        _heightAboveGround.text = $"Height: {distanceToGround:F1}m";
+        _heightAboveGround.text = $"Height: {_distanceToGround:F1}m";
     }
+
+
+    private IEnumerator Flip()
+    {
+        float _rotationAmount = 0f;
+        float _rotationSpeed = 360f / 0.5f;  //rotate on 0.5 sec
+
+        Quaternion _initialRotation = transform.rotation;
+
+        while (_rotationAmount < 360f)
+        {
+            float _rotationStep = _rotationSpeed * Time.deltaTime;
+            transform.Rotate(Vector3.forward, _rotationStep, Space.Self);
+            _rotationAmount += _rotationStep;
+            yield return null;
+        }
+
+        transform.localEulerAngles = new Vector3(0f, transform.localEulerAngles.y, 0f);
+    }
+
 
     /* BONUS METHODS*/
 
