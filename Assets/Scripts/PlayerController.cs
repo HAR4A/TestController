@@ -11,6 +11,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _speedBoostText;
     [SerializeField] private TextMeshProUGUI _currentSpeed;
     [SerializeField] private TextMeshProUGUI _heightAboveGround;
+    [SerializeField] private ParticleSystem _bonusEffect;
 
     private CharacterController _characterController;
     private Vector3 _velocity;
@@ -40,6 +41,7 @@ public class PlayerController : MonoBehaviour
     {
         _characterController = GetComponent<CharacterController>();
         _originalSpeed = _speed;
+        _bonusEffect.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
     }
 
     private void Update()
@@ -179,6 +181,7 @@ public class PlayerController : MonoBehaviour
         _doubleJumpEnabled = true;
         _maxJumpCount = 2;
         _doubleJumpTimer = _doubleJumpDuration;
+        _bonusEffect.Play();
 
         while (_doubleJumpTimer > 0)
         {
@@ -194,6 +197,7 @@ public class PlayerController : MonoBehaviour
         _doubleJumpEnabled = false;
         _maxJumpCount = 1;
         _doubleJumpTimer = 0f;
+        _bonusEffect.Stop();
     }
 
     public void EnableSpeedBoost()          //activate boost speed bonus
@@ -210,6 +214,7 @@ public class PlayerController : MonoBehaviour
         _speed = _originalSpeed * 2;
         _speedBoostEnabled = true;
         _speedBoostTimer = _speedBoostDuration;
+        _bonusEffect.Play();
 
         while (_speedBoostTimer > 0)
         {
@@ -225,5 +230,6 @@ public class PlayerController : MonoBehaviour
         _speed = _originalSpeed;
         _speedBoostEnabled = false;
         _speedBoostTimer = 0f;
+        _bonusEffect.Stop();
     }
 }
