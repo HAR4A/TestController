@@ -55,8 +55,8 @@ public class PlayerController : MonoBehaviour
         Move();
         Jump();
         DoubleJump();
-        UpdateUI();
-        UpdateHeightAboveGround();
+        ShowUI();
+        ShowHeightAboveGround();
 
         _velocity.y += _gravity * Time.deltaTime;
         _characterController.Move(_velocity * Time.deltaTime);
@@ -101,12 +101,12 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private void UpdateUI()
+    private void ShowUI()
     {
         _doubleJumpText.text = _doubleJumpEnabled ? $"Double Jump: {_doubleJumpTimer:F1}s" : "";
         _speedBoostText.text = _speedBoostEnabled ? $"Speed Boost: {_speedBoostTimer:F1}s" : "";        
     }
-    private void UpdateHeightAboveGround()
+    private void ShowHeightAboveGround()
     {
         RaycastHit hit;
         float distanceToGround = 0f;
