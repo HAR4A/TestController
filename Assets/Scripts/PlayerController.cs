@@ -54,8 +54,7 @@ public class PlayerController : MonoBehaviour
         Move();
         Jump();
         DoubleJump();
-        UpdateUI();
-        UpdateSpeedUI();
+        UpdateUI();    
 
         _velocity.y += _gravity * Time.deltaTime;
         _characterController.Move(_velocity * Time.deltaTime);
@@ -71,6 +70,15 @@ public class PlayerController : MonoBehaviour
         move.y = 0f;
 
         _characterController.Move(move * _speed * Time.deltaTime);
+
+        if (move != Vector3.zero)
+        {
+            _currentSpeed.text = _speedBoostEnabled ? "Speed: 12" : "Speed: 6";
+        }
+        else
+        {
+            _currentSpeed.text = "Speed: 0";
+        }
     }
 
     private void Jump()
@@ -96,10 +104,7 @@ public class PlayerController : MonoBehaviour
         _doubleJumpText.text = _doubleJumpEnabled ? $"Double Jump: {_doubleJumpTimer:F1}s" : "";
         _speedBoostText.text = _speedBoostEnabled ? $"Speed Boost: {_speedBoostTimer:F1}s" : "";        
     }
-    private void UpdateSpeedUI()
-    {
-        _currentSpeed.text = $"Speed: {_speed:F1}";
-    }
+   
 
     /* BONUS METHODS*/
 
