@@ -10,6 +10,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _doubleJumpText;
     [SerializeField] private TextMeshProUGUI _speedBoostText;
     [SerializeField] private TextMeshProUGUI _currentSpeed;
+    [SerializeField] private TextMeshProUGUI _heightAboveGround;
 
     private CharacterController _characterController;
     private Vector3 _velocity;
@@ -54,7 +55,8 @@ public class PlayerController : MonoBehaviour
         Move();
         Jump();
         DoubleJump();
-        UpdateUI();    
+        UpdateUI();
+        UpdateHeightAboveGround();
 
         _velocity.y += _gravity * Time.deltaTime;
         _characterController.Move(_velocity * Time.deltaTime);
@@ -104,7 +106,30 @@ public class PlayerController : MonoBehaviour
         _doubleJumpText.text = _doubleJumpEnabled ? $"Double Jump: {_doubleJumpTimer:F1}s" : "";
         _speedBoostText.text = _speedBoostEnabled ? $"Speed Boost: {_speedBoostTimer:F1}s" : "";        
     }
-   
+    private void UpdateHeightAboveGround()
+    {
+        RaycastHit hit;
+        float distanceToGround = 0f;
+
+        if (Physics.Raycast(transform.position, Vector3.down, out hit))
+        {
+            distanceToGround = hit.distance;
+
+            //the variant bellow is for the distance to the main ground, and not to any solid object     
+
+            /*if (hit.collider.CompareTag("Ground"))
+            {
+                distanceToGround = hit.distance;
+            }
+            else
+            {
+
+                distanceToGround = 0f;
+            }*/
+        }
+
+        _heightAboveGround.text = $"Height: {distanceToGround:F1}m";
+    }
 
     /* BONUS METHODS*/
 
